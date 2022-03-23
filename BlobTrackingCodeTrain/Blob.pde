@@ -27,10 +27,10 @@ class Blob {
     rectMode(CORNERS);
     rect(minx, miny, maxx, maxy);
 
-    for (PVector v : points) {
+    //for (PVector v : points) {
       //stroke(0, 0, 255);
       //point(v.x, v.y);
-    }
+    //}
   }
 
 
@@ -44,6 +44,12 @@ class Blob {
 
   float size() {
     return (maxx-minx)*(maxy-miny);
+  }
+  
+  float center() {
+    float center;
+    center = dist(minx,miny,maxx,maxy)/2;
+    return center;
   }
 
   boolean isNear(float x, float y) {

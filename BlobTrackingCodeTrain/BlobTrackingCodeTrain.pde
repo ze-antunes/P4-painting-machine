@@ -14,10 +14,8 @@ float distThreshold = 50;
 ArrayList<Blob> blobs = new ArrayList<Blob>();
 
 void setup() {
-  size(640, 360);
-  String[] cameras = Capture.list();
-  printArray(cameras);
-  video = new Capture(this, 640, 360);
+  size(1000, 800);
+  video = new Capture(this, 320, 240);
   video.start();
   trackColor = color(255, 0, 0);
 }
@@ -26,26 +24,9 @@ void captureEvent(Capture video) {
   video.read();
 }
 
-void keyPressed() {
-  if (key == 'a') {
-    distThreshold+=5;
-  } else if (key == 'z') {
-    distThreshold-=5;
-  }
-  if (key == 's') {
-    threshold+=5;
-  } else if (key == 'x') {
-    threshold-=5;
-  }
-
-
-  println(distThreshold);
-}
-
 void draw() {
   video.loadPixels();
   image(video, 0, 0);
-
   blobs.clear();
 
 
@@ -63,7 +44,6 @@ void draw() {
       float b2 = blue(trackColor);
 
       float d = distSq(r1, g1, b1, r2, g2, b2); 
-
       if (d < threshold*threshold) {
 
         boolean found = false;
@@ -86,13 +66,13 @@ void draw() {
   for (Blob b : blobs) {
     if (b.size() > 500) {
       b.show();
+      float size = b.size();
+      float center = b.center();
+      print ("size=" + center);
     }
   }
-
-  textAlign(RIGHT);
-  fill(0);
-  text("distance threshold: " + distThreshold, width-10, 25);
-  text("color threshold: " + threshold, width-10, 50);
+  
+  line(mouseX, mouseY, mouseX, pmouseY);
 }
 
 
@@ -112,4 +92,5 @@ void mousePressed() {
   // Save color where the mouse is clicked in trackColor variable
   int loc = mouseX + mouseY*video.width;
   trackColor = video.pixels[loc];
+  
 }
