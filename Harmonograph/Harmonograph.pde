@@ -21,28 +21,32 @@ float dy1 = random(0.005) + random(0.005);
 float dy2 = random(0.005) + random(0.005);
 float t = 0.0;
 
- float X;
- float Y;
- float guardaX;
- float guardaY;
+float X;
+float Y;
+float z;
+float guardaX;
+float guardaY;
 
 ArrayList<PVector> points = new ArrayList<PVector>();
+
 
 void setup () {
 
   size (1080, 720, P3D);
   colorMode(HSB);
   smooth();
+
+  z = 0;
 }
 
 void draw() {
-  X = map(mouseX,0,width,0,1);
-  Y = map(mouseY, 0, height, 0,1);
+  X = map(mouseX, 0, width, 0, 1);
+  Y = map(mouseY, 0, height, 0, 1);
   guardaX = X;
   guardaY = Y;
-  if (savePDF) beginRecord(PDF, timestamp()+".pdf");
+  if (savePDF) beginRecord(PDF, "data/" + timestamp()+".pdf");
 
-  background(255);
+  background(0);
 
   float x = ax1 * sin(t * fx1 + X) * exp(-dx1 * t) 
     + 
@@ -52,32 +56,29 @@ void draw() {
     +
     ay2 * sin(t * fy2 + Y) * exp(-dy2 * t);
 
-  points.add(new PVector(x, y));
+  points.add(new PVector(x, y, z));
 
   translate(width/2, height/2);
 
 
   noFill();
 
-  float hu = 0;
-
   beginShape();
   for (PVector v : points) {
     //v = points.get(points.size()-1);
     //print(points.get(points.size()-1));
- 
+
     vertex(v.x, v.y);
     //vertex(points.get(points.size()-1).x, points.get(points.size()-1).y);
-     if(guardaX != mouseX || guardaY != mouseY){
-      stroke(hu, 255, 255);
-      hu += 0.1;
-      if (hu > 255) {
-        hu = 0;
+    if (guardaX != mouseX || guardaY != mouseY) {
+      stroke(v.z, 255, 255);
+      z += 0.1;
+      if (z > 255) {
+        z = 0;
       }
-     }
-     else{
-        stroke(0);
-     }
+    } else {
+      stroke(0);
+    }
   }
 
   endShape();
@@ -92,7 +93,9 @@ void draw() {
 
 
 void keyPressed() {
-  if (key=='s' || key=='S') saveFrame(timestamp()+"_##.jpeg");
+  if (key=='s' || key=='S') {
+    saveFrame("data/" + timestamp() + "_##.png");
+  }
   if (key=='p' || key=='P') savePDF = true;
 }
 
