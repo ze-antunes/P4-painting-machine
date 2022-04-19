@@ -16,7 +16,7 @@ float px2 = random(TWO_PI);
 float py1 = random(TWO_PI);
 float py2 = random(TWO_PI);
 float dx1 = random(0.005) + random(0.005);
-float dx2 = random(0.005) + random(0.005);
+float dx2 = random(0.005) + random(0.005);  
 float dy1 = random(0.005) + random(0.005);
 float dy2 = random(0.005) + random(0.005);
 float t = 0.0;
@@ -69,7 +69,7 @@ void draw() {
     //print(points.get(points.size()-1));
 
     vertex(v.x, v.y);
-    //vertex(points.get(points.size()-1).x, points.get(points.size()-1).y);
+    vertex(points.get(points.size()-1).x, points.get(points.size()-1).y);
     if (guardaX != mouseX || guardaY != mouseY) {
       stroke(v.z, 255, 255);
       z += 0.1;
@@ -94,13 +94,18 @@ void draw() {
 
 void keyPressed() {
   if (key=='s' || key=='S') {
-    saveFrame("data/" + timestamp() + "_##.png");
+    saveFrame("data/" + timestamp() + ".png");
   }
   if (key=='p' || key=='P') savePDF = true;
+  if (key == '1') {
+    println("hello");
+  stroke(255,255,0);
+  }
+  
 }
 
 // timestamp
 String timestamp() {
   Calendar now = Calendar.getInstance();
-  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", now);
+  return String.format("%1$td-%1$tm-%1$ty_%1$tH'%1$tM''%1$tS", now);
 }
