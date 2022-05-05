@@ -70,15 +70,15 @@ void draw() {
     //print(points.get(points.size()-1));
     vertex(v.x, v.y);
     //vertex(points.get(points.size()-1).x, points.get(points.size()-1).y);
-    if (guardaX != mouseX || guardaY != mouseY) {
-      stroke(v.z, 255, 255);
-      z += 0.1;
-      if (z > 255) {
-        z = 0;
-      }
-    } else {
+    //if (guardaX != mouseX || guardaY != mouseY) {
+    //  stroke(v.z, 255, 255);
+    //  z += 0.1;
+    //  if (z > 255) {
+    //    z = 0;
+    //  }
+    //} else {
       stroke(0);
-    }
+    //}
   }
   endShape();
 

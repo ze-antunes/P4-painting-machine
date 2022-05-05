@@ -1,15 +1,15 @@
 import express from "express";
 import ptp from "pdf-to-printer";
 
-ptp.getPrinters().then((value) => {
-    console.log(value[0].name);
-});
+ptp.getPrinters().then((value) => 
+    console.log(value)
+);
 
 const app = express();
 const port = 3000;
 
 const options = {
-    printer: "EPSON BX300F Series",
+    printer: "OneNote for Windows 10",
     scale: "fit",
 };
 
@@ -21,18 +21,18 @@ function sleep(ms) {
 
 app.get('/print', async (req, res) => {
 
-    let fileName = "data/" + req.query.name;
-    console.log("imprimir " + fileName);
-    await sleep(1000);
-    await ptp.print("data/" + req.query.name, options);
-    res.status(200);
-});
+    try{
+        let fileName = "data/" + req.query.name;
+        console.log("imprimir " + fileName);
+        await sleep(1000);
+        await ptp.print("data/" + req.query.name, options);
+        res.status(200);
+    }
 
-/* app.get( '/printer', async (req, res) => {
-    console.log("hello");
-    
-    res.status(404);
-}); */
+    catch{
+        console.log("error");
+    }
+});
 
 app.listen(port, () => {
     console.log(`PDF Printing Service listening on port ${port}`)

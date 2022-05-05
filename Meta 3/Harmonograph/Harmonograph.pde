@@ -42,8 +42,10 @@ Amplitude analyzer;
 void setup () {
 
   size (1080, 720, P3D);
-  colorMode(HSB);
+  colorMode(RGB);
   smooth();
+  
+  frameRate(120);
 
   input = new AudioIn(this, 0);
   input.start();
@@ -62,40 +64,31 @@ void draw() {
   background(255);
 
   float vol = analyzer.analyze();
-  float z = vol*100;
+  float z = vol*50;
   //println(z);
 
   float x = ax1 * sin(t * fx1 + X) * exp(-dx1 * t) + ax2 * sin(t * fx2 + X) * exp(-dx2 * t);
   float y = ay1 * sin(t * fy1+ Y) * exp(-dy1 * t) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * t);
 
-  stroke(255);  
+  //stroke(255);  
   points.add(new PVector(x, y, z));
   translate(width/2, height/2);
   noFill();
 
-  //beginShape();
+  beginShape();
   for (PVector v : points) {
-    //strokeWeight(v.z);
-    int vert = (int) v.z;
-    int shapeVert = (int) map( vert, 1, 10, 1, 10);
-    println(shapeVert);
+    strokeWeight(v.z);
+    //int vert = (int) v.z;
+    //println(vert);
+    //int shapeVert = (int) map( vert, 0, 30, 1, 9);
+    //println(shapeVert);
+    stroke(0, 0, 0);
 
-    drawShape(v.x, v.y, shapeVert, v.z);
+    //drawShape(v.x, v.y, shapeVert, v.z);
 
     vertex(v.x, v.y);
-
-    //if (guardaX != mouseX || guardaY != mouseY) {
-    //  stroke(v.x, 255, 255);
-    //  z += 0.1;
-    //  if (z > 255) {
-    //    z = 0;
-    //  }
-    //} else {
-    //  stroke(0);
-    //}
-    stroke(0);
   }
-  //endShape();
+  endShape();
 
   t = t + 0.05;
 
@@ -142,32 +135,4 @@ void keyPressed() {
 String timestamp() {
   Calendar now = Calendar.getInstance();
   return String.format("%1$td-%1$tm-%1$ty_%1$tH'%1$tM''%1$tS", now);
-}
-
-void drawShape(float x, float y, int vertices, float raio) {
-
-  if (vertices == 0) {
-    pushMatrix();
-    beginShape();
-    vertex(x, y);
-    endShape();
-    popMatrix();
-  } else {
-    pushMatrix();
-    translate(x, y);
-
-    beginShape(TRIANGLE_STRIP);
-
-    for (int i = 0; i <= vertices; i++) {
-      float angle = TWO_PI / vertices;
-      float a = sin(i * angle) * (raio);
-      float b = cos(i * angle) * (raio);
-
-      vertex(a, b);
-      vertex(a, b);
-    }
-
-    endShape();
-    popMatrix();
-  }
 }
