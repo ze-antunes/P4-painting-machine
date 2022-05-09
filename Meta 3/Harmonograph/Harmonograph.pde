@@ -1,3 +1,4 @@
+import processing.opengl.*;
 import processing.pdf.*;
 import processing.sound.*;
 import java.util.Calendar;
@@ -10,10 +11,10 @@ import processing.sound.*;
 
 boolean savePDF = false;
 
-float ax1 = 150;//width * 0.9 * (random(1) + random(1));
-float ax2 = 150;//width * 0.9 * (random(1) + random(1));
-float ay1 = 150;//height * 0.9 * (random(1) + random(1));
-float ay2 = 150;//height * 0.9 * (random(1) + random(1));
+float ax1 = 150;
+float ax2 = 150;
+float ay1 = 150;
+float ay2 = 150;
 float fx1 = int(5 * random(1) * random(1)) + 1 + 0.01 * randomGaussian();
 float fx2 = int(5 * random(1) * random(1)) + 1 + 0.01 * randomGaussian();
 float fy1 = int(5 * random(1) * random(1)) + 1 + 0.01 * randomGaussian();

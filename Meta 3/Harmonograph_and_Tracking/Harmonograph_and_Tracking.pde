@@ -38,11 +38,15 @@ float guardaY;
 ArrayList<PVector> points = new ArrayList<PVector>();
 String FileName;
 
-AudioIn input;
-Amplitude analyzer;
+//AudioIn input;
+//Amplitude analyzer;
+FFT fft;
+AudioIn in;
+int bands = 512;
+float[] spectrum = new float[bands];
 
 Capture video;
-color trackColor;
+color trackColor = color (0, 0, 0);
 float threshold = 25;
 
 void setup () {
@@ -52,10 +56,20 @@ void setup () {
   smooth();
 
 
-  input = new AudioIn(this, 0);
-  input.start();
-  analyzer = new Amplitude(this);
-  analyzer.input(input);
+  //input = new AudioIn(this, 0);
+  //input.start();
+  //analyzer = new Amplitude(this);
+  //analyzer.input(input);
+
+  // Create an Input stream which is routed into the Amplitude analyzer
+  fft = new FFT(this, bands);
+  in = new AudioIn(this, 0);
+
+  // start the Audio Input
+  in.start();
+
+  // patch the AudioIn
+  fft.input(in);
 
   video = new Capture(this, width, height);
   video.start();
@@ -67,9 +81,11 @@ void captureEvent(Capture video) {
 }
 
 void draw() {
-  background(255);
+  //background(255);
+  fill(0);
+  text("frameRate:"+frameRate, width/2, 30, 0);
   video.loadPixels();
-  
+
   X = map(mouseX, 0, width, 0, 1);
   Y = map(mouseY, 0, height, 0, 1);
   guardaX = X;
@@ -88,30 +104,45 @@ void draw() {
   float avgY = 0;
 
   int count = 0;
-
+  ArrayList <PVector> arr = new ArrayList <PVector>();
   // Begin loop to walk through every pixel
-  for (int i = 0; i < video.width; i++ ) {
-    for (int j = 0; j < video.height; j++ ) {
+  for (int i = 0; i < video.width; i+=5 ) {
+    for (int j = 0; j < video.height; j+=5 ) {
       int loc = i + j * video.width;
-      // What is current color
-      color currentColor = video.pixels[loc];
-      float r1 = red(currentColor);
-      float g1 = green(currentColor);
-      float b1 = blue(currentColor);
-      float r2 = red(trackColor);
-      float g2 = green(trackColor);
-      float b2 = blue(trackColor);
+      //float r1 = x >> 24 & 0xFF;
+      float r = video.pixels[loc] >> 16 & 0xFF;
+      float g = video.pixels[loc] >> 8 & 0xFF;
+      float b = video.pixels[loc] & 0xFF;
 
-      float d = distSq(r1, g1, b1, r2, g2, b2); 
-
-      if (d < threshold*threshold) {
-        stroke(255);
-        strokeWeight(1);
-        point(i, j);
+      float dist = distSq(r, g, b, red(trackColor), green(trackColor), blue(trackColor)); 
+      if (dist < sq(threshold)) {
+        arr.add(new PVector(avgX, avgY));
         avgX += i;
         avgY += j;
         count++;
       }
+
+      //int g = x >> 8 & 0xFF;
+      //int b = x & 0xFF;
+      // What is current color
+      /*color currentColor = video.pixels[loc];
+       float r1 = red(currentColor);
+       float g1 = green(currentColor);
+       float b1 = blue(currentColor);
+       float r2 = red(trackColor);
+       float g2 = green(trackColor);
+       float b2 = blue(trackColor);
+       
+       float d = distSq(r1, g1, b1, r2, g2, b2); 
+       
+       if (d < threshold*threshold) {
+       stroke(255);
+       strokeWeight(1);
+       point(i, j);
+       avgX += i;
+       avgY += j;
+       count++;
+       }*/
     }
   }
 
@@ -122,7 +153,9 @@ void draw() {
     fill(trackColor);
     //strokeWeight(4.0);
     stroke(0);
-    ellipse(avgX, avgY, 24, 24);
+    if (locX != -1 && locY != -1) {
+      ellipse(locX, locY, 24, 24);
+    }
   }
   popMatrix();
   //}
@@ -131,9 +164,19 @@ void draw() {
   if (saveSVG) beginRaw(SVG, "data/" + FileName);
 
 
-  float vol = analyzer.analyze();
-  float z = vol*50;
+  //float vol = analyzer.analyze();
+  //float[] z = vol*50;
   //println(z);
+
+  float z = 0;
+
+  fft.analyze(spectrum);
+
+  for (int i = 0; i < bands; i++) {
+    // The result of the FFT is normalized
+    // draw the line for frequency band i scaling it up by 5 to get more amplitude.
+    z = spectrum[i]*height*50;
+  } 
 
   float x = ax1 * sin(t * fx1 + avgX) * exp(-dx1 * t) + ax2 * sin(t * fx2 + avgX) * exp(-dx2 * t);
   float y = ay1 * sin(t * fy1+ avgY) * exp(-dy1 * t) + ay2 * sin(t * fy2 + avgY) * exp(-dy2 * t);
@@ -156,7 +199,10 @@ void draw() {
     savePDF = false;
     saveSVG = false;
     //endRecord();
-    endRaw();
+    dispose();
+    // endRaw();
+    //  endDraw();
+    endRecord();
   }
 }
 
@@ -189,10 +235,12 @@ void keyPressed() {
   //    println("Falhou conecção");
   //  }
   //}
-  
+
   if (key=='p' || key=='P') {
     FileName = timestamp()+".pdf";
     savePDF = true;
+    
+    generatePDF(FileName);
 
     try {
       Thread.sleep(100);
@@ -228,9 +276,39 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
   float d = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) +(z2-z1)*(z2-z1);
   return d;
 }
-
+float locX = -1, locY = -1;
 void mousePressed() {
   // Save color where the mouse is clicked in trackColor variable
+  locX= mouseX;
+  locY = mouseY;
   int loc = mouseX + mouseY*video.width;
   trackColor = video.pixels[loc];
+}
+
+void generatePDF (String name) {
+  //println ("generating:", millis());
+  PGraphics pdf = createGraphics (width, height, PDF, "data/" + name);
+
+  pdf.beginDraw();
+  pdf.translate(pdf.width/2, pdf.height/2);
+  // pdf.background(255,0,0);
+ 
+  pdf.stroke(0);
+  pdf.fill(0);
+ 
+  for (int i=0; i<points.size()-1; i++) {
+    PVector v = points.get(i);
+    PVector v2 = points.get(i+1);
+    pdf.strokeWeight(v.z);
+    pdf.stroke(0,0,0);
+    pdf.line(v.x, v.y, v2.x,v2.y);
+    // pdf.beginShape();
+    // pdf.vertex(v.x, v.y);
+    // pdf.strokeWeight(v.z);
+    // println ("v.z", v.z);
+    // pdf.ellipse(v.x, v.y, v.z, v.z);
+    // pdf.endShape();
+  }
+  pdf.dispose();
+  pdf.endDraw();
 }

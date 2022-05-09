@@ -91,17 +91,19 @@ void draw() {
   translate(width/2, height/2);
   noFill();
 
-  //beginShape();
-  for (PVector v : points) {
-    //strokeWeight(v.z);
-    //stroke(0, 0, 0);
-    //vertex(v.x, v.y);
-    println(v.x + " -- " + (v.get()));
-    C1 = new PVector(v.x, v.y);
-    C2 = new PVector(v.x-1, v.y-1);
-    bresenhamAlg(C1, C2, color(255, 255, 0));
-  }
-  //endShape();
+  ////beginShape();
+  //for (int i=0; i<points.size(); i++) {
+  ////for (PVector v : points) {
+  //  //strokeWeight(v.z);
+  //  //stroke(0, 0, 0);
+  //  //vertex(v.x, v.y);
+  //  //if (i ))
+  //  // println(v.x + " -- " + (v.get(v.size()-1)));
+  //  C1 = new PVector(v.x, v.y);
+  //  C2 = new PVector(v.x-1, v.y-1);
+  //  bresenhamAlg(C1, C2, color(255, 255, 0));
+  //}
+  ////endShape();
 
   t = t + 0.05;
 
