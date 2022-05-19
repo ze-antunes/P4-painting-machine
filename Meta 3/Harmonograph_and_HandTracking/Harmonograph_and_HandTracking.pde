@@ -65,14 +65,17 @@ void setup () {
 
   fft.input(in);
 
-  println("creating network...");
+  //println("creating network...");
   network = vision.createHandDetector();
 
-  println("loading model...");
+  //println("loading model...");
   network.setup();
   network.setConfidenceThreshold(0.5);
 
-  video = new Capture(this, width, height);
+  String[] cameras = Capture.list();
+  println(cameras[0]);
+
+  video = new Capture(this, width, height, cameras[0]);
   video.start();
 }
 
@@ -81,32 +84,46 @@ void captureEvent(Capture video) {
 }
 
 void draw() {
-  background(255);
-  fill(0);
-  text("frameRate:"+frameRate, width/2, 30, 0);
-  video.loadPixels();
-
-  X = map(mouseX, 0, width, 0, 1);
-  Y = map(mouseY, 0, height, 0, 1);
 
   pushMatrix();
   translate(width/2, height/2);
   pushMatrix();
   scale(-1, 1);
   translate(- width/2, - height/2);
-  //image(video, 0, 0);
+  image(video, 0, 0);
+  popMatrix();
+  popMatrix();
 
-  //detections = network.run(video);
+  background(255);
+
+  fill(0);
+  text("frameRate:"+frameRate, width/2, 30, 0);
+  video.loadPixels();
+
+  //X = map(mouseX, 0, width, 0, 1);
+  //Y = map(mouseY, 0, height, 0, 1);
+
+  detections = network.run(video);
+
+  println(detections.size());
+
+  if (frameRate%2 == 0) {
+    if (detections.size() == 1) {
+      for (ObjectDetectionResult detection : detections) {
+        X = detection.getX();
+        Y = detection.getY();
+      }
+    }
+  }  
 
   //for (ObjectDetectionResult detection : detections) {
-  //  println(detection.getClassName());
+  //println(detections.size());
+  //println(detection.getClassName() + " " + detections.size());
   //  stroke(0);
   //  rect(detection.getX(), detection.getY(), detection.getWidth(), detection.getHeight());
   //  X = detection.getX();
   //  Y = detection.getY();
   //}
-  popMatrix();
-  popMatrix();
 
   if (savePDF) beginRecord(PDF, "data/" + FileName);
   if (saveSVG) beginRaw(SVG, "data/" + FileName);
@@ -119,8 +136,11 @@ void draw() {
     z = spectrum[i]*height*100;
   }
 
-  float x = ax1 * sin(X * fx1 + X) * exp(-dx1 * X) + ax2 * sin(t * fx2 + X) * exp(-dx2 * X);
-  float y = ay1 * sin(Y * fy1+ Y) * exp(-dy1 * Y) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * Y);
+  //float x = ax1 * sin(X * fx1 + X) * exp(-dx1 * X) + ax2 * sin(t * fx2 + X) * exp(-dx2 * X);
+  //float y = ay1 * sin(Y * fy1+ Y) * exp(-dy1 * Y) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * Y);
+  
+  float x = ax1 * sin(t * fx1 + X) * exp(-dx1 * X) + ax2 * sin(t * fx2 + X) * exp(-dx2 * X);
+  float y = ay1 * sin(t * fy1+ Y) * exp(-dy1 * Y) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * Y);
 
   points.add(new PVector(x, y, z));
   translate(width/2, height/2);

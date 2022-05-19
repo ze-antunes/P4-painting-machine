@@ -96,7 +96,7 @@ void draw() {
   pushMatrix();
   scale(-1, 1);
   translate(- width/2, - height/2);
-  image(video, 0, 0);
+  //image(video, 0, 0);
 
   threshold = 25;
 
@@ -178,8 +178,8 @@ void draw() {
     z = spectrum[i]*height*50;
   } 
 
-  float x = ax1 * sin(t * fx1 + avgX) * exp(-dx1 * t) + ax2 * sin(t * fx2 + avgX) * exp(-dx2 * t);
-  float y = ay1 * sin(t * fy1+ avgY) * exp(-dy1 * t) + ay2 * sin(t * fy2 + avgY) * exp(-dy2 * t);
+  float x = ax1 * sin(X * fx1 + X) * exp(-dx1 * X) + ax2 * sin(t * fx2 + X) * exp(-dx2 * X);
+  float y = ay1 * sin(Y * fy1+ Y) * exp(-dy1 * Y) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * Y);
 
   points.add(new PVector(x, y, z));
   translate(width/2, height/2);
@@ -239,7 +239,7 @@ void keyPressed() {
   if (key=='p' || key=='P') {
     FileName = timestamp()+".pdf";
     savePDF = true;
-    
+
     generatePDF(FileName);
 
     try {
@@ -292,16 +292,16 @@ void generatePDF (String name) {
   pdf.beginDraw();
   pdf.translate(pdf.width/2, pdf.height/2);
   // pdf.background(255,0,0);
- 
+
   pdf.stroke(0);
   pdf.fill(0);
- 
+
   for (int i=0; i<points.size()-1; i++) {
     PVector v = points.get(i);
     PVector v2 = points.get(i+1);
     pdf.strokeWeight(v.z);
-    pdf.stroke(0,0,0);
-    pdf.line(v.x, v.y, v2.x,v2.y);
+    pdf.stroke(0, 0, 0);
+    pdf.line(v.x, v.y, v2.x, v2.y);
     // pdf.beginShape();
     // pdf.vertex(v.x, v.y);
     // pdf.strokeWeight(v.z);

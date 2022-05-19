@@ -46,7 +46,7 @@ void setup () {
   colorMode(RGB);
   smooth();
   
-  frameRate(120);
+  //frameRate(120);
 
   input = new AudioIn(this, 0);
   input.start();

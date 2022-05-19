@@ -141,9 +141,12 @@ void draw() {
   for (int i = 0; i < bands; i++) {
     z = spectrum[i]*height*100;
   } 
+  
+  float x = ax1 * sin(t * fx1 + X) * exp(-dx1 * X) + ax2 * sin(t * fx2 + X) * exp(-dx2 * X);
+  float y = ay1 * sin(t * fy1+ Y) * exp(-dy1 * Y) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * Y);
 
-  float x = ax1 * sin(t * fx1 + avgX) * exp(-dx1 * t) + ax2 * sin(t * fx2 + avgX) * exp(-dx2 * t);
-  float y = ay1 * sin(t * fy1+ avgY) * exp(-dy1 * t) + ay2 * sin(t * fy2 + avgY) * exp(-dy2 * t);
+  //float x = ax1 * sin(t * fx1 + X) * exp(-dx1 * t) + ax2 * sin(t * fx2 + X) * exp(-dx2 * t);
+  //float y = ay1 * sin(t * fy1+ Y) * exp(-dy1 * t) + ay2 * sin(t * fy2 + Y) * exp(-dy2 * t);
 
   points.add(new PVector(x, y, z));
   translate(width/2, height/2);
@@ -206,7 +209,7 @@ void keyPressed() {
     }
 
     try {
-      String printer ="HP Photosmart C4380 series";
+      String printer ="EPSON BX300F Series";
       String scale = "fit";
       
       

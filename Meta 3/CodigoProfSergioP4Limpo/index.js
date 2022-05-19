@@ -3,6 +3,8 @@ import ptp from "pdf-to-printer";
 
 let printers = await ptp.getPrinters();
 
+// console.log(printers);
+
 const app = express();
 const port = 3000;
 
@@ -39,6 +41,9 @@ app.get('/print', async (req, res) => {
             scale: req.query.scale
         }
         console.log(opts);
+        // console.log(1);
+        // console.log(2);
+        await ptp.print("data/" + req.query.name, opts);
         await ptp.print("data/" + req.query.name, opts);
         res.status(200);
     }

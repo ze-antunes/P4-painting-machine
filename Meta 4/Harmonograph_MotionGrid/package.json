@@ -1,0 +1,19 @@
+{
+  "name": "pdf_printing_service",
+  "version": "1.0.0",
+  "description": "Trying to print a pdf to the project :')",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.17.3",
+    "fs": "0.0.1-security",
+    "pdf-to-printer": "^5.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "José Antunes",
+  "license": "ISC",
+  "type": "module"
+}
